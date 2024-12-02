@@ -14,6 +14,7 @@ use yii\base\Model;
 class LoginForm extends Model
 {
     public $username;
+    public $email;
     public $password;
     public $rememberMe = true;
 
@@ -64,7 +65,6 @@ class LoginForm extends Model
         }
         return false;
     }
-
     /**
      * Finds user by [[username]]
      *
