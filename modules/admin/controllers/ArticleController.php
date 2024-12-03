@@ -68,33 +68,20 @@ class ArticleController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-//    public function actionCreate()
-//    {
-//        $model = new Article();
-//
-//        if ($this->request->isPost) {
-//            if ($model->load($this->request->post()) && $model->save()) {
-//                return $this->redirect(['view', 'id' => $model->id]);
-//            }
-//        } else {
-//            $model->loadDefaultValues();
-//        }
-//
-//        return $this->render('create', [
-//            'model' => $model,
-//        ]);
-//    }
+
     public function actionCreate()
     {
         $model = new Article();
 
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $model->saveArticle()) {
             $model->image = UploadedFile::getInstance($model, 'image');
 
             if($model->save()) {
-                $imageUpload = new ImageUpload();
-                $filename = $imageUpload->uploadFile($model->image, $model->image);
-                $model->saveImage($filename);
+                if($model->image) {
+                    $imageUpload = new ImageUpload();
+                    $filename = $imageUpload->uploadFile($model->image, null);
+                    $model->saveImage($filename);
+                }
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
@@ -110,20 +97,16 @@ class ArticleController extends Controller
      */
     public function actionUpdate($id)
     {
-//        $model = $this->findModel($id);
-//
-//        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-//            return $this->redirect(['view', 'id' => $model->id]);
-//        }
-//
-//        return $this->render('update', [
-//            'model' => $model,
-//        ]);
         $model = $this->findModel($id);
         $currentImage = $model->image;
 
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $model->saveArticle()) {
             $model->image = UploadedFile::getInstance($model, 'image');
+
+            if(Yii::$app->request->post('delete_image')) {
+                $model->deleteImage();
+                $model->image = null;
+            }
 
             if($model->save()) {
                 if($model->image) {

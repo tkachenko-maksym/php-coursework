@@ -20,14 +20,16 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'date')->textInput() ?>
 
-    <div class="form-group">
-        <?php if($model->image): ?>
-            <img src="<?= $model->getImage() ?>" alt="" width="200">
-        <?php endif; ?>
-    </div>
 
     <?= $form->field($model, 'image')->fileInput(['maxlength' => true]) ?>
 
+    <?php if($model->image): ?>
+        <div class="form-group">
+            <img src="<?= $model->getImage() ?>" alt="" width="200">
+            <?= Html::hiddenInput('delete_image', 0) ?>
+            <?= Html::checkbox('delete_image', false, ['label' => 'Delete image']) ?>
+        </div>
+    <?php endif; ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

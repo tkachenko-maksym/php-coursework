@@ -45,7 +45,7 @@ class Article extends \yii\db\ActiveRecord
             [['date'], 'default', 'value' => date('Y-m-d')],
             [['title'], 'string', 'max' => 255],
             [['category_id'], 'number'],
-            [['image'], 'required'],
+//            [['image'], 'required'],
             [['image'], 'file', 'extensions' => 'jpg,png']
 
         ];
