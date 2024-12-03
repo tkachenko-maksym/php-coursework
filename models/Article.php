@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\data\Pagination;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -23,8 +24,9 @@ use yii\helpers\ArrayHelper;
  * @property ArticleTag[] $articleTags
  * @property Comment[] $comments
  */
-class Article extends \yii\db\ActiveRecord
+class Article extends ActiveRecord
 {
+    protected $tagIds;
     /**
      * @inheritdoc
      */
@@ -39,13 +41,14 @@ class Article extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title'], 'required'],
+            [['title', 'description', 'content', 'category_id'], 'required'],
             [['title', 'description', 'content'], 'string'],
             [['date'], 'date', 'format' => 'php:Y-m-d'],
             [['date'], 'default', 'value' => date('Y-m-d')],
             [['title'], 'string', 'max' => 255],
             [['category_id'], 'number'],
-//            [['image'], 'required'],
+            [['tags'], 'each', 'rule' => ['integer']], // For array of tag IDs
+            [['tags'], 'safe'],
             [['image'], 'file', 'extensions' => 'jpg,png']
 
         ];
@@ -69,7 +72,16 @@ class Article extends \yii\db\ActiveRecord
             'category_id' => 'Category ID',
         ];
     }
-
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if (empty($this->date)) {
+                $this->date = date('Y-m-d');
+            }
+            return true;
+        }
+        return false;
+    }
     public function saveArticle()
     {
         $this->user_id = Yii::$app->user->id;
@@ -112,7 +124,15 @@ class Article extends \yii\db\ActiveRecord
             return true;
         }
     }
+    public function getTagIds()
+    {
+        return $this->tagIds ?? $this->getSelectedTags();
+    }
 
+    public function setTagIds($value)
+    {
+        $this->tagIds = $value;
+    }
     public function getTags()
     {
         return $this->hasMany(Tag::className(), ['id' => 'tag_id'])
@@ -125,14 +145,19 @@ class Article extends \yii\db\ActiveRecord
         return ArrayHelper::getColumn($selectedIds, 'id');
     }
 
-    public function saveTags($tags)
+    public function saveTags($tagIds)
     {
-        if (is_array($tags)) {
+        if (is_array($tagIds)) {
             $this->clearCurrentTags();
 
-            foreach ($tags as $tag_id) {
-                $tag = Tag::findOne($tag_id);
-                $this->link('tags', $tag);
+            foreach ($tagIds as $tagId) {
+                $tag = Tag::findOne($tagId);
+                if ($tag) {
+                    $articleTag = new ArticleTag();
+                    $articleTag->article_id = $this->id;
+                    $articleTag->tag_id = $tag->id;
+                    $articleTag->save();
+                }
             }
         }
     }

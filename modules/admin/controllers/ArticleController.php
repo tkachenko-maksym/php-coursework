@@ -4,8 +4,11 @@ namespace app\modules\admin\controllers;
 
 use app\models\Article;
 use app\models\ArticleSearch;
+use app\models\Category;
 use app\models\ImageUpload;
+use app\models\Tag;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -63,62 +66,69 @@ class ArticleController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Article model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
 
     public function actionCreate()
     {
         $model = new Article();
+        $categories = ArrayHelper::map(Category::find()->all(), 'id', 'title');
+        $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'title');
 
         if ($model->load(Yii::$app->request->post()) && $model->saveArticle()) {
-            $model->image = UploadedFile::getInstance($model, 'image');
+            $tagIds = Yii::$app->request->post('Article')['tagIds'] ?? [];
+            $model->saveTags($tagIds);
 
-            if($model->save()) {
-                if($model->image) {
-                    $imageUpload = new ImageUpload();
-                    $filename = $imageUpload->uploadFile($model->image, null);
-                    $model->saveImage($filename);
-                }
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($imageFile = UploadedFile::getInstance($model, 'image')) {
+                $imageUpload = new ImageUpload();
+                $filename = $imageUpload->uploadFile($imageFile, null);
+                $model->saveImage($filename);
             }
+
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->render('create', ['model' => $model]);
+        return $this->render('create', [
+            'model' => $model,
+            'categories' => $categories,
+            'tags' => $tags,
+        ]);
     }
-    /**
-     * Updates an existing Article model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+
+
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $categories = ArrayHelper::map(Category::find()->all(), 'id', 'title');
+        $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'title');
+
         $currentImage = $model->image;
 
-        if ($model->load(Yii::$app->request->post()) && $model->saveArticle()) {
-            $model->image = UploadedFile::getInstance($model, 'image');
+        if ($model->load(Yii::$app->request->post())) {
+            $tagIds = Yii::$app->request->post('Article')['tagIds'] ?? [];
 
-            if(Yii::$app->request->post('delete_image')) {
-                $model->deleteImage();
-                $model->image = null;
-            }
+            if ($model->saveArticle()) {
+                $model->saveTags($tagIds);
 
-            if($model->save()) {
-                if($model->image) {
+                if (Yii::$app->request->post('delete_image')) {
+                    $model->deleteImage();
+                    $model->image = null;
+                }
+
+                if ($imageFile = UploadedFile::getInstance($model, 'image')) {
                     $imageUpload = new ImageUpload();
-                    $filename = $imageUpload->uploadFile($model->image, $currentImage);
+                    $filename = $imageUpload->uploadFile($imageFile, $currentImage);
                     $model->saveImage($filename);
                 }
+
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 
-        return $this->render('update', ['model' => $model]);
+        $model->tagIds = $model->getSelectedTags();
+        return $this->render('update', [
+            'model' => $model,
+            'categories' => $categories,
+            'tags' => $tags,
+        ]);
     }
 
     /**
@@ -150,6 +160,7 @@ class ArticleController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
     public function actionSetImage($id)
     {
         $model = new ImageUpload;
@@ -164,5 +175,23 @@ class ArticleController extends Controller
         }
 
         return $this->render('image', ['model' => $model]);
+    }
+
+    public function actionSetTags($id)
+    {
+        $article = $this->findModel($id);
+        $selectedTags = $article->getSelectedTags();
+        $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'title');
+
+        if (Yii::$app->request->isPost) {
+            $tags = Yii::$app->request->post('tags');
+            $article->saveTags($tags);
+            return $this->redirect(['view', 'id' => $article->id]);
+        }
+
+        return $this->render('tags', [
+            'selectedTags' => $selectedTags,
+            'tags' => $tags
+        ]);
     }
 }
