@@ -34,13 +34,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'description:ntext',
             'content:ntext',
             'date',
-            'category_id',
+            [
+                'attribute' => 'category_id',
+                'value' => 'category.title',
+                'label' => 'Category'
+            ],
 
             [
                 'format' => 'html',
                 'label' => 'Image',
-                'value' => function($data){
-                    return Html::img($data->getImage(), ['width'=>200]);
+                'value' => function ($data) {
+                    return Html::img($data->getImage(), ['width' => 200]);
                 }
             ],
             //'viewed',
@@ -50,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Article $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                }
             ],
         ],
     ]); ?>

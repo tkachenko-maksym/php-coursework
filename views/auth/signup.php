@@ -12,7 +12,7 @@ use yii\bootstrap5\ActiveForm;
 $this->title = 'Register now!';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-login">
+<div class="site-login pt-10 px-4">
     <h1 align="center"><?= Html::encode($this->title) ?></h1>
 
     <p align="center">Please fill out the following fields to register:</p>
@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model, 'password')->passwordInput() ?>
 
             <div class="form-group">
-                <div class="col-lg-offset-1 col-lg-11">
+                <div>
                     <?= Html::submitButton('Sign up', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
                 </div>
             </div>

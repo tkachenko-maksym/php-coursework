@@ -1,53 +1,90 @@
 <?php
-
-/** @var yii\web\View $this */
-
-$this->title = 'My Yii Application';
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\widgets\LinkPager;
 ?>
-<div class="site-index">
 
-    <div class="jumbotron text-center bg-transparent mt-5 mb-5">
-        <h1 class="display-4">Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="https://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
-    <div class="body-content">
-
+<div class="main-content">
+    <div class="container">
         <div class="row">
-            <div class="col-lg-4 mb-3">
-                <h2>Heading</h2>
+            <div class="col-md-8">
+                <?php if (!empty($articles)): ?>
+                    <?php foreach($articles as $article): ?>
+                        <article class="post">
+                            <div class="post-thumb">
+                                <?php if ($article->image): ?>
+                                    <a href="<?= Url::toRoute(['site/view', 'id'=>$article->id]);?>">
+                                        <?= Html::img($article->getImage(), ['alt' => $article->title]) ?>
+                                    </a>
+                                <?php endif; ?>
+                                <a href="<?= Url::toRoute(['site/view', 'id'=>$article->id]);?>" class="post-thumb-overlay">
+                                    <div class="view-post">View Post</div>
+                                </a>
+                            </div>
+                            <div class="post-content">
+                                <header class="entry-header">
+                                    <?php if ($article->category): ?>
+                                        <h6 class="category-link">
+                                            <a href="<?= Url::toRoute(['site/category', 'id'=>$article->category->id])?>">
+                                                <?= Html::encode($article->category->title) ?>
+                                            </a>
+                                        </h6>
+                                    <?php endif; ?>
+                                    <h1 class="entry-title">
+                                        <a href="<?= Url::toRoute(['site/view', 'id'=>$article->id]);?>">
+                                            <?= Html::encode($article->title) ?>
+                                        </a>
+                                    </h1>
+                                </header>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
+                                <div class="entry-content">
+                                    <?= Html::encode($article->description) ?>
+                                    <div class="continue-reading">
+                                        <a href="<?= Url::toRoute(['site/view', 'id'=>$article->id]);?>" class="more-link">
+                                            Continue Reading
+                                        </a>
+                                    </div>
+                                </div>
 
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
+                                <div class="post-meta">
+                                    <span class="post-author">
+                                        By <?= Html::encode($article->author->username) ?>
+                                    </span>
+                                    <span class="post-date">
+                                        On <?= $article->getDate() ?>
+                                    </span>
+                                    <div class="post-stats">
+                                        <span class="views">
+                                            Views:
+                                            <?= (int)$article->viewed ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+
+                    <div class="pagination-wrap">
+                        <?= LinkPager::widget([
+                            'pagination' => $pagination,
+                            'options' => ['class' => 'pagination'],
+                            'activePageCssClass' => 'active',
+                        ]); ?>
+                    </div>
+                <?php else: ?>
+                    <div class="no-posts">
+                        <p>No articles found.</p>
+                    </div>
+                <?php endif; ?>
             </div>
-            <div class="col-lg-4 mb-3">
-                <h2>Heading</h2>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
+            <div class="col-md-4">
+                <?= $this->render('/partials/sidebar', [
+                    'popular' => $popular,
+                    'recent' => $recent,
+                    'categories' => $categories,
+                ]); ?>
             </div>
         </div>
-
     </div>
 </div>

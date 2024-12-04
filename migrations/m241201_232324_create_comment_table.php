@@ -14,10 +14,11 @@ class m241201_232324_create_comment_table extends Migration
     {
         $this->createTable('comment', [
             'id' => $this->primaryKey(),
-            'text'=>$this->string(),
-            'user_id'=>$this->integer(),
-            'article_id'=>$this->integer(),
-            'status'=>$this->integer()
+            'text' => $this->string(),
+            'user_id' => $this->integer(),
+            'article_id' => $this->integer(),
+            'status' => $this->integer(),
+            'date' => $this->dateTime()
         ]);
 
         // creates index for column `user_id`

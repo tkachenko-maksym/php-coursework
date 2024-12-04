@@ -49,7 +49,7 @@ class Article extends ActiveRecord
             [['category_id'], 'number'],
             [['tags'], 'each', 'rule' => ['integer']], // For array of tag IDs
             [['tags'], 'safe'],
-            [['image'], 'file', 'extensions' => 'jpg,png']
+            [['image'], 'file', 'extensions' => 'jpg, jpeg, png']
 
         ];
     }
@@ -213,7 +213,10 @@ class Article extends ActiveRecord
     {
         return $this->getComments()->where(['status' => 1])->all();
     }
-
+    public function getCommentCount()
+    {
+        return $this->hasMany(Comment::className(), ['article_id' => 'id'])->count();
+    }
     public function getAuthor()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);

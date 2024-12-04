@@ -34,6 +34,8 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'category/<id:\d+>' => 'site/category',
+                'tag/<id:\d+>' => 'site/tag',
             ],
         ],
 

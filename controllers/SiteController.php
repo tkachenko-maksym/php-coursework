@@ -2,6 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\Article;
+use app\models\Category;
+use app\models\Comment;
+use app\models\CommentForm;
+use app\models\Tag;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -61,7 +66,18 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $data = Article::getAll();
+        $popular = Article::getPopular();
+        $recent = Article::getRecent();
+        $categories = Category::getAll();
+
+        return $this->render('index', [
+            'articles' => $data['articles'],
+            'pagination' => $data['pagination'],
+            'popular' => $popular,
+            'recent' => $recent,
+            'categories' => $categories,
+        ]);
     }
 
     /**
@@ -136,6 +152,80 @@ class SiteController extends Controller
             // If it's the first time or validation fails
             return $this->render('entry', ['model' => $model]);
         }
+    }
+    public function actionView($id)
+    {
+        $article = Article::findOne($id);
+        $popular = Article::getPopular();
+        $recent = Article::getRecent();
+        $categories = Category::getAll();
+        $comments = $article->getArticleComments();
+
+        $commentForm = new CommentForm();
+
+        $article->viewedCounter();
+
+        return $this->render('single_article',[
+            'article'=>$article,
+            'popular'=>$popular,
+            'recent'=>$recent,
+            'categories'=>$categories,
+            'comments'=>$comments,
+            'commentForm'=>$commentForm
+        ]);
+    }
+    public function actionCategory($id)
+    {
+        $data = Category::getArticlesByCategory($id);
+        $popular = Article::getPopular();
+        $recent = Article::getRecent();
+        $categories = Category::getAll();
+        $categoryTitle = Category::getCategoryTitle($id);
+        return $this->render('category',[
+            'categoryTitle'=>$categoryTitle,
+            'articles'=>$data['articles'],
+            'pagination'=>$data['pagination'],
+            'popular'=>$popular,
+            'recent'=>$recent,
+            'categories'=>$categories,
+        ]);
+    }
+    public function actionTag($id)
+    {
+        $data = Tag::getArticlesByTag($id);
+        $popular = Article::getPopular();
+        $recent = Article::getRecent();
+        $categories = Category::getAll();
+        $tagTitle = Tag::getTagTitle($id);
+
+        return $this->render('tag', [
+            'tagTitle' => $tagTitle,
+            'articles' => $data['articles'],
+            'pagination' => $data['pagination'],
+            'popular' => $popular,
+            'recent' => $recent,
+            'categories' => $categories,
+        ]);
+    }
+    public function actionComment($id)
+    {
+        $model = new CommentForm();
+        $article = Article::findOne($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $comment = new Comment();
+            $comment->text = $model->comment;
+            $comment->user_id = Yii::$app->user->id;
+            $comment->article_id = $article->id;
+            $comment->status = 1;
+            $comment->save();
+
+            Yii::$app->session->setFlash('success', 'Comment added successfully!');
+            return $this->redirect(['view', 'id' => $article->id]);
+        }
+
+        Yii::$app->session->setFlash('error', 'Error adding comment.');
+        return $this->redirect(['view', 'id' => $article->id]);
     }
 }
 
