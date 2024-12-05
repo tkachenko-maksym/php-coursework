@@ -43,7 +43,10 @@ class User extends ActiveRecord implements IdentityInterface
             'verification_token' => 'Verification Token',
         ];
     }
-
+    public function isAdmin()
+    {
+        return $this->isAdmin == 1;
+    }
 
     public static function findIdentity($id)
     {

@@ -8,13 +8,13 @@ use yii\helpers\Url;
     <p>Welcome to the admin panel! Use the links below to manage the blog's content:</p>
 
     <div class="admin-actions">
-        <a href="<?= Url::to(['article/index']) ?>" class="btn-link">
+        <a href="<?= Url::to(['article/create']) ?>" class="btn-link">
             Create Article
         </a>
-        <a href="<?= Url::to(['category/index']) ?>" class="btn-link">
+        <a href="<?= Url::to(['category/create']) ?>" class="btn-link">
             Create Category
         </a>
-        <a href="<?= Url::to(['tag/index']) ?>" class="btn-link">
+        <a href="<?= Url::to(['tag/create']) ?>" class="btn-link">
             Create Tag
         </a>
     </div>

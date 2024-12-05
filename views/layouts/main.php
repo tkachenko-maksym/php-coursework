@@ -45,6 +45,10 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             ['label' => 'About', 'url' => ['/site/about']],
         ];
 
+        if (Yii::$app->user->identity->isAdmin()) {
+            $menuItems[] = ['label' => 'Admin Dashboard', 'url' => ['/admin']];
+        }
+
         if (Yii::$app->user->isGuest) {
             $menuItems[] = ['label' => 'Signup', 'url' => ['/auth/signup'], 'options' => ['class' => 'nav-signup']];
             $menuItems[] = ['label' => 'Login', 'url' => ['/auth/login']];

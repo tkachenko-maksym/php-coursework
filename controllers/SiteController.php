@@ -257,11 +257,9 @@ class SiteController extends Controller
             $comment->status = 1;
             $comment->save();
 
-            Yii::$app->session->setFlash('success', 'Comment added successfully!');
             return $this->redirect(['view', 'id' => $article->id]);
         }
 
-        Yii::$app->session->setFlash('error', 'Error adding comment.');
         return $this->redirect(['view', 'id' => $article->id]);
     }
 }
