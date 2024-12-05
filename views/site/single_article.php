@@ -1,7 +1,9 @@
 <?php
+
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+
 ?>
 
 <div class="main-content">
@@ -18,15 +20,17 @@ use yii\widgets\ActiveForm;
                     <div class="post-content">
                         <header class="entry-header">
                             <div class="category-link">
-                                <a href="<?= Url::toRoute(['site/category', 'id' => $article->category->id]) ?>">
-                                    <?= Html::encode($article->category->title) ?>
-                                </a>
+                                <?php if ($article->category->id ?? null): ?>
+                                    <a href="<?= Url::toRoute(['site/category', 'id' => $article->category->id]) ?>">
+                                        <?= Html::encode($article->category->title) ?>
+                                    </a>
+                                <?php endif; ?>
                             </div>
                             <h1 class="entry-title"><?= Html::encode($article->title) ?></h1>
                             <div class="post-meta">
                                 <span class="author">By <?= Html::encode($article->author->username) ?></span>
                                 <span class="date">On <?= $article->getDate() ?></span>
-                                <span class="views">Views: </i> <?= (int) $article->viewed ?></span>
+                                <span class="views">Views: </i> <?= (int)$article->viewed ?></span>
                             </div>
                         </header>
 
@@ -52,15 +56,15 @@ use yii\widgets\ActiveForm;
                                 $sharingUrls = $article->getSharingUrls();
                                 ?>
                                 <a href="<?= $sharingUrls['facebook'] ?>" class="share-btn facebook" target="_blank"
-                                    rel="noopener">
-                                     Facebook
+                                   rel="noopener">
+                                    Facebook
                                 </a>
                                 <a href="<?= $sharingUrls['twitter'] ?>" class="share-btn twitter" target="_blank"
-                                    rel="noopener">
-                                     Twitter
+                                   rel="noopener">
+                                    Twitter
                                 </a>
                                 <a href="<?= $sharingUrls['linkedin'] ?>" class="share-btn linkedin" target="_blank"
-                                    rel="noopener">
+                                   rel="noopener">
                                     LinkedIn
                                 </a>
                             </div>
@@ -75,7 +79,8 @@ use yii\widgets\ActiveForm;
                         <?php foreach ($comments as $comment): ?>
                             <div class="comment">
                                 <div class="comment-avatar">
-                                    <!--                                    <img src="--><?php //= $comment->user->getAvatar() ?><!--" alt="User avatar">-->
+                                    <!--                                    <img src="-->
+                                    <?php //= $comment->user->getAvatar() ?><!--" alt="User avatar">-->
                                 </div>
                                 <div class="comment-content">
                                     <div class="comment-meta">
@@ -101,7 +106,7 @@ use yii\widgets\ActiveForm;
                             <?= $form->field($commentForm, 'comment')
                                 ->textarea(['rows' => 5])
                                 ->label(false)
-                                ?>
+                            ?>
 
                             <div class="form-group">
                                 <?= Html::submitButton('Post Comment', ['class' => 'btn btn-primary']) ?>

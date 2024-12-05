@@ -42,7 +42,7 @@ use yii\widgets\LinkPager;
                                     <?= Html::encode($article->description) ?>
                                     <div class="continue-reading">
                                         <a href="<?= Url::toRoute(['site/view', 'id' => $article->id]); ?>"
-                                           class="more-link">
+                                           class="btn-link">
                                             Continue Reading
                                         </a>
                                     </div>

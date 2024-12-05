@@ -4,6 +4,13 @@ use yii\helpers\Url;
 ?>
 
 <div class="sidebar">
+    <div class="widget">
+        <h5 class="widget-title">Search</h5>
+        <form action="<?= Url::to(['site/search']) ?>" method="get">
+            <input type="text" name="q" class="form-control" placeholder="Search tags...">
+            <button type="submit" class="btn btn-primary mt-2">Search</button>
+        </form>
+    </div>
     <?php if (!empty($popular)): ?>
         <aside class="widget">
             <h3 class="widget-title">Popular Posts</h3>

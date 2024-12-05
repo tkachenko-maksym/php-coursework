@@ -8,7 +8,9 @@ use app\models\Comment;
 use app\models\CommentForm;
 use app\models\Tag;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -202,6 +204,41 @@ class SiteController extends Controller
             'tagTitle' => $tagTitle,
             'articles' => $data['articles'],
             'pagination' => $data['pagination'],
+            'popular' => $popular,
+            'recent' => $recent,
+            'categories' => $categories,
+        ]);
+    }
+
+    public function actionSearch($q)
+    {
+        $popular = Article::getPopular();
+        $recent = Article::getRecent();
+        $categories = Category::getAll();
+
+        $tags = Tag::find()
+            ->where(['like', 'title', $q])
+            ->all();
+
+        $query = Article::find()
+            ->joinWith(['tags'])
+            ->where(['tag.title' => ArrayHelper::getColumn($tags, 'title')])
+            ->orWhere(['like', 'article.title', $q]) // Add search by title
+            ->with(['author', 'category'])
+            ->groupBy('article.id')
+            ->orderBy(['date' => SORT_DESC]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 6
+            ]
+        ]);
+
+        return $this->render('search', [
+            'articles' => $dataProvider->getModels(),
+            'pagination' => $dataProvider->getPagination(),
+            'searchQuery' => $q,
             'popular' => $popular,
             'recent' => $recent,
             'categories' => $categories,

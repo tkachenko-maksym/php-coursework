@@ -43,7 +43,7 @@ class Article extends ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'content', 'category_id'], 'required'],
+            [['title', 'description', 'content'], 'required'],
             [['title', 'description', 'content'], 'string'],
             [['date'], 'date', 'format' => 'php:Y-m-d'],
             [['date'], 'default', 'value' => date('Y-m-d')],
