@@ -101,24 +101,24 @@ class ArticleController extends Controller
         $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'title');
 
         $currentImage = $model->image;
-
         if ($model->load(Yii::$app->request->post())) {
             $tagIds = Yii::$app->request->post('Article')['tagIds'] ?? [];
-
+            $uploadedImage = UploadedFile::getInstance($model, 'image');
+            if ($uploadedImage) {
+                $imageUpload = new ImageUpload();
+                $filename = $imageUpload->uploadFile($uploadedImage, $currentImage);
+                $model->image = $filename; // Update the image
+            } else {
+                $model->image = $currentImage; // Keep the old image
+            }
             if ($model->saveArticle()) {
                 $model->saveTags($tagIds);
 
                 if (Yii::$app->request->post('delete_image')) {
                     $model->deleteImage();
                     $model->image = null;
+                    $model->save(false); // Save changes after deletion
                 }
-
-                if ($imageFile = UploadedFile::getInstance($model, 'image')) {
-                    $imageUpload = new ImageUpload();
-                    $filename = $imageUpload->uploadFile($imageFile, $currentImage);
-                    $model->saveImage($filename);
-                }
-
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
@@ -159,22 +159,6 @@ class ArticleController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    public function actionSetImage($id)
-    {
-        $model = new ImageUpload;
-        $article = $this->findModel($id);
-
-        if (Yii::$app->request->isPost) {
-            $file = UploadedFile::getInstance($model, 'image');
-
-            if ($article->saveImage($model->uploadFile($file, $article->image))) {
-                return $this->redirect(['view', 'id' => $article->id]);
-            }
-        }
-
-        return $this->render('image', ['model' => $model]);
     }
 
     public function actionSetTags($id)

@@ -6,6 +6,8 @@ use Yii;
 use yii\data\Pagination;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
+
 
 /**
  * This is the model class for table "article".
@@ -95,7 +97,8 @@ class Article extends ActiveRecord
     }
 
     public function getImage()
-    { $imagesPath = Yii::getAlias('@web') . '/uploads/';
+    {
+        $imagesPath = Yii::getAlias('@web') . '/uploads/';
         return ($this->image) ? $imagesPath . $this->image : $imagesPath . '/no_image.jpg';
     }
 
@@ -226,5 +229,16 @@ class Article extends ActiveRecord
     {
         $this->viewed += 1;
         return $this->save(false);
+    }
+    public function getSharingUrls()
+    {
+        $url = Url::to(['site/view', 'id' => $this->id], true);
+        $title = urlencode($this->title);
+
+        return [
+            'facebook' => "https://www.facebook.com/sharer/sharer.php?u={$url}",
+            'twitter' => "https://twitter.com/intent/tweet?url={$url}&text={$title}",
+            'linkedin' => "https://www.linkedin.com/sharing/share-offsite/?url={$url}"
+        ];
     }
 }

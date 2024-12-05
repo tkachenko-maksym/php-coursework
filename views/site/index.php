@@ -1,7 +1,9 @@
 <?php
+
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
+
 ?>
 
 <div class="main-content">
@@ -9,15 +11,14 @@ use yii\widgets\LinkPager;
         <div class="row">
             <div class="col-md-8">
                 <?php if (!empty($articles)): ?>
-                    <?php foreach($articles as $article): ?>
+                    <?php foreach ($articles as $article): ?>
                         <article class="post">
                             <div class="post-thumb">
-                                <?php if ($article->image): ?>
-                                    <a href="<?= Url::toRoute(['site/view', 'id'=>$article->id]);?>">
-                                        <?= Html::img($article->getImage(), ['alt' => $article->title]) ?>
-                                    </a>
-                                <?php endif; ?>
-                                <a href="<?= Url::toRoute(['site/view', 'id'=>$article->id]);?>" class="post-thumb-overlay">
+                                <a href="<?= Url::toRoute(['site/view', 'id' => $article->id]); ?>">
+                                    <?= Html::img($article->getImage(), ['alt' => $article->title]) ?>
+                                </a>
+                                <a href="<?= Url::toRoute(['site/view', 'id' => $article->id]); ?>"
+                                   class="post-thumb-overlay">
                                     <div class="view-post">View Post</div>
                                 </a>
                             </div>
@@ -25,13 +26,13 @@ use yii\widgets\LinkPager;
                                 <header class="entry-header">
                                     <?php if ($article->category): ?>
                                         <h6 class="category-link">
-                                            <a href="<?= Url::toRoute(['site/category', 'id'=>$article->category->id])?>">
+                                            <a href="<?= Url::toRoute(['site/category', 'id' => $article->category->id]) ?>">
                                                 <?= Html::encode($article->category->title) ?>
                                             </a>
                                         </h6>
                                     <?php endif; ?>
                                     <h1 class="entry-title">
-                                        <a href="<?= Url::toRoute(['site/view', 'id'=>$article->id]);?>">
+                                        <a href="<?= Url::toRoute(['site/view', 'id' => $article->id]); ?>">
                                             <?= Html::encode($article->title) ?>
                                         </a>
                                     </h1>
@@ -40,7 +41,8 @@ use yii\widgets\LinkPager;
                                 <div class="entry-content">
                                     <?= Html::encode($article->description) ?>
                                     <div class="continue-reading">
-                                        <a href="<?= Url::toRoute(['site/view', 'id'=>$article->id]);?>" class="more-link">
+                                        <a href="<?= Url::toRoute(['site/view', 'id' => $article->id]); ?>"
+                                           class="more-link">
                                             Continue Reading
                                         </a>
                                     </div>
@@ -54,10 +56,10 @@ use yii\widgets\LinkPager;
                                         On <?= $article->getDate() ?>
                                     </span>
                                     <div class="post-stats">
-                                        <span class="views">
-                                            Views:
-                                            <?= (int)$article->viewed ?>
-                                        </span>
+                                        <div class="post-stats">
+                                            <span>Views: <?= $article->viewed ?? 0 ?></span>
+                                            <span>Comments: <?= $article->getCommentCount() ?></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

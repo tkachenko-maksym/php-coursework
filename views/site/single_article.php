@@ -26,7 +26,7 @@ use yii\widgets\ActiveForm;
                             <div class="post-meta">
                                 <span class="author">By <?= Html::encode($article->author->username) ?></span>
                                 <span class="date">On <?= $article->getDate() ?></span>
-                                <span class="views">Views: </i> <?= (int)$article->viewed ?></span>
+                                <span class="views">Views: </i> <?= (int) $article->viewed ?></span>
                             </div>
                         </header>
 
@@ -48,9 +48,21 @@ use yii\widgets\ActiveForm;
                         <div class="social-share">
                             <div class="share-title">Share this article</div>
                             <div class="share-buttons">
-                                <a href="#" class="share-btn facebook">Facebook</a>
-                                <a href="#" class="share-btn twitter">Twitter</a>
-                                <a href="#" class="share-btn linkedin">Linkedin</a>
+                                <?php
+                                $sharingUrls = $article->getSharingUrls();
+                                ?>
+                                <a href="<?= $sharingUrls['facebook'] ?>" class="share-btn facebook" target="_blank"
+                                    rel="noopener">
+                                     Facebook
+                                </a>
+                                <a href="<?= $sharingUrls['twitter'] ?>" class="share-btn twitter" target="_blank"
+                                    rel="noopener">
+                                     Twitter
+                                </a>
+                                <a href="<?= $sharingUrls['linkedin'] ?>" class="share-btn linkedin" target="_blank"
+                                    rel="noopener">
+                                    LinkedIn
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -63,7 +75,7 @@ use yii\widgets\ActiveForm;
                         <?php foreach ($comments as $comment): ?>
                             <div class="comment">
                                 <div class="comment-avatar">
-<!--                                    <img src="--><?php //= $comment->user->getAvatar() ?><!--" alt="User avatar">-->
+                                    <!--                                    <img src="--><?php //= $comment->user->getAvatar() ?><!--" alt="User avatar">-->
                                 </div>
                                 <div class="comment-content">
                                     <div class="comment-meta">
@@ -89,7 +101,7 @@ use yii\widgets\ActiveForm;
                             <?= $form->field($commentForm, 'comment')
                                 ->textarea(['rows' => 5])
                                 ->label(false)
-                            ?>
+                                ?>
 
                             <div class="form-group">
                                 <?= Html::submitButton('Post Comment', ['class' => 'btn btn-primary']) ?>
