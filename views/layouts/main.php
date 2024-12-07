@@ -45,7 +45,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             ['label' => 'About', 'url' => ['/site/about']],
         ];
 
-        if (Yii::$app->user->identity->isAdmin()) {
+        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin()) {
             $menuItems[] = ['label' => 'Admin Dashboard', 'url' => ['/admin']];
         }
 

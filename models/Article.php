@@ -49,7 +49,7 @@ class Article extends ActiveRecord
             [['date'], 'default', 'value' => date('Y-m-d')],
             [['title'], 'string', 'max' => 255],
             [['category_id'], 'number'],
-            [['tags'], 'each', 'rule' => ['integer']], // For array of tag IDs
+            [['tags'], 'each', 'rule' => ['integer']],
             [['tags'], 'safe'],
             [['image'], 'file', 'extensions' => 'jpg, jpeg, png']
 

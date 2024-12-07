@@ -14,23 +14,31 @@ class m241201_232155_create_article_table extends Migration
     {
         $this->createTable('article', [
             'id' => $this->primaryKey(),
-            'title'=>$this->string(),
-            'description'=>$this->text(),
-            'content'=>$this->text(),
-            'date'=>$this->date(),
-            'image'=>$this->string(),
-            'viewed'=>$this->integer(),
-            'user_id'=>$this->integer(),
-            'status'=>$this->integer(),
-            'category_id'=>$this->integer(),
+            'title' => $this->string(),
+            'description' => $this->text(),
+            'content' => $this->text(),
+            'date' => $this->date(),
+            'image' => $this->string(),
+            'viewed' => $this->integer(),
+            'user_id' => $this->integer(),
+            'status' => $this->integer(),
+            'category_id' => $this->integer(),
         ]);
+
+        // Add foreign key
+        $this->addForeignKey(
+            'fk-article-category_id',
+            'article',
+            'category_id',
+            'category',
+            'id',
+            'CASCADE'
+        );
     }
 
-    /**
-     * @inheritdoc
-     */
     public function down()
     {
+        $this->dropForeignKey('fk-article-category_id', 'article');
         $this->dropTable('article');
     }
 }

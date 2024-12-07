@@ -9,7 +9,7 @@ use yii\helpers\Url;
     <div class="widget">
         <h5 class="widget-title">Search</h5>
         <form action="<?= Url::to(['site/search']) ?>" method="get">
-            <input type="text" name="q" class="form-control" placeholder="Search tags...">
+            <input type="text" name="q" class="form-control" placeholder="Search...">
             <button type="submit" class="btn btn-primary mt-2">Search</button>
         </form>
     </div>

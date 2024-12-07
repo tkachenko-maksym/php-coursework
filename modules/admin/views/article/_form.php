@@ -1,8 +1,5 @@
 <?php
 
-use app\models\Category;
-use app\models\Tag;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 

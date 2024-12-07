@@ -3,7 +3,7 @@
 namespace app\modules\admin\controllers;
 
 use app\models\Tag;
-use app\models\TagSearch;
+use app\models\Search;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -38,7 +38,7 @@ class TagController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new TagSearch();
+        $searchModel = new Search();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
